@@ -1,0 +1,111 @@
+<% layout('layouts/boilerplate')%>
+<link rel="stylesheet" href="/stylesheets/stars.css">
+
+<div class="row">
+    <div class="col-6">
+        <div id="routeCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <% route.images.forEach((img, i) => {  %>
+                <div class="carousel-item <%= i === 0 ? 'active' : ''%>">
+                    <img src="<%= img.url%>" class="d-block w-100" alt="">
+                </div>
+                <% }) %>
+
+            </div>
+            <% if(route.images.length > 1) {%>
+            <a class="carousel-control-prev" href="#routeCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#routeCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+            <% } %>
+        </div>
+
+        <div class="card mb-3">        
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title"><%= route.title%></h5>
+                    <div class="form-check form-switch d-flex justify-content-end">
+                        <%  if( currentUser && !fav )  {%>
+                            <form action="/routes/<%=route._id%>/fav" method="POST" class="mb-3 validated-form" novalidate>
+                                <button class="btn btn-info mb-3">Fav</button>
+                            </form>
+                        <% }else if( currentUser ){ %>
+                                <form action="/routes/<%=route._id%>/Unfav" method="POST" class="mb-3 validated-form" novalidate>
+                                    <button class="btn btn-warning mb-3">UnFav</button>
+                                </form>
+                            <% } %> 
+                    </div>
+                </div>
+                <p class="card-text"><%= route.description%></p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item text-muted"><%= route.location%></li>
+                <li class="list-group-item">Submitted by <%= route.author.username%></li>
+                <li class="list-group-item">$<%= route.price%>/night</li>
+            </ul>
+            <%  if( currentUser && route.author.equals(currentUser._id))  {%>
+            <div class="card-body">
+                <a class="card-link btn btn-info" href="/routes/<%=route._id%>/edit">Edit</a>
+                <form class="d-inline" action="/routes/<%=route._id%>?_method=DELETE" method="POST">
+                    <button class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+            <% } %>
+            <div class="card-footer text-muted">
+                2 days ago
+            </div>
+        </div>
+        <a href="/routes"><button class="btn btn-info mb-3" >&laquo; Back To All Routes</button></a>
+    </div>
+    <div class="col-6">
+        <% if(currentUser){ %>
+        <h2>Leave a Review</h2>
+        <form action="/routes/<%=route._id%>/reviews" method="POST" class="mb-3 validated-form" novalidate>
+            
+            <fieldset class="starability-basic">
+                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked
+                    aria-label="No rating." />
+                <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                <label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                <label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                <label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                <label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                <label for="first-rate5" title="Amazing">5 stars</label>
+            </fieldset>
+            <div class="mb-3">
+                <label class="form-label" for="body">Review Text</label>
+                <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3" required></textarea>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+            <button class="btn btn-success">Submit</button>
+        </form>
+        <% } %>
+        <% for(let review of route.reviews) { %>
+        <div class="card mb-3 ">
+            <div class="card-body">
+                <h5 class="card-title"> <%= review.author.username%></h5>
+                <p class="starability-result" data-rating="<%=review.rating%>">
+                    Rated: <%= review.rating %> stars
+                </p>
+                <!-- <h6 class="card-subtitle mb-2 text-muted">By <%= review.author.username%></h6> -->
+                <p class="card-text">Review: <%= review.body %></p>
+                <%  if( currentUser && review.author.equals(currentUser._id))  {%>
+                <form action="/routes/<%=route._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                    <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
+                <% } %>
+            </div>
+        </div>
+        <% } %>
+    </div>
+</div>

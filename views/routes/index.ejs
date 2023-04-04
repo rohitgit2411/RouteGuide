@@ -1,0 +1,32 @@
+
+
+<% layout('layouts/boilerplate')%>
+<link rel="stylesheet" href="/stylesheets/stars.css">
+
+<h1 class="text-center"style="margin-bottom: 75px;" > Explore Routes...</h1>
+<% for (let route of routes){%>
+<div class="card mb-3" >
+    <div class="row">
+        <div class="col-md-4">
+            <% if(route.images[0]!=undefined){ %>
+                <img class="img-fluid" style="height: 100%;" alt="" src="<%=route.images[0].url%>">
+            <% }else{ %>
+                <img class="img-fluid" style="height: 100%;" alt="" src="https://res.cloudinary.com/sicklycycling-o6/image/upload/v1656388650/routeGuide/noimage-420x273_nju7gu.jpg">
+                <% } %> 
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title"><%= route.title %></h5>
+                </div>
+            
+                <p class="card-text"><%= route.description %></p>
+                <p class="card-text">
+                    <small class="text-muted"><%= route.location%></small>
+                </p>
+                <a class="btn btn-primary" href="/routes/<%=route._id%>">View <%=route.title%></a>
+            </div>
+        </div>
+    </div>
+</div>
+<% }%>
